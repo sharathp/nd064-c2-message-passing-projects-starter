@@ -32,7 +32,7 @@ spec:
     spec:
       containers:
       - image: udacity/nd064-udaconnect-api:latest
-        name: udaconnect-api
+        name: udaconnect-person-api
         imagePullPolicy: Always
         env:
         - name: DB_USERNAME

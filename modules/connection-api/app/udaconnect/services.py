@@ -1,16 +1,18 @@
 import logging
+import requests
 from datetime import datetime, timedelta
 from typing import Dict, List
 
-from app import db
+from app import db, kafka_producer   # noqa
 from app.udaconnect.models import Connection, Location, Person
-from app.udaconnect.schemas import ConnectionSchema, LocationSchema, PersonSchema
-from geoalchemy2.functions import ST_AsText, ST_Point
+from app.udaconnect.schemas import LocationSchema
 from sqlalchemy.sql import text
 
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("udaconnect-person-api")
 
+TOPIC_KAFKA_LOCATIONS = "locations"
+BASE_URL_PERSON_API = "http://udaconnect-person-api:5000/api"
 
 class ConnectionService:
     @staticmethod
@@ -101,34 +103,16 @@ class LocationService:
             logger.warning(f"Unexpected data format in payload: {validation_results}")
             raise Exception(f"Invalid payload: {validation_results}")
 
-        new_location = Location()
-        new_location.person_id = location["person_id"]
-        new_location.creation_time = location["creation_time"]
-        new_location.coordinate = ST_Point(location["latitude"], location["longitude"])
-        db.session.add(new_location)
-        db.session.commit()
-
-        return new_location
+        # pass the location to be created into kafka topic
+        kafka_producer.send(TOPIC_KAFKA_LOCATIONS, location)
+        return location
 
 
 class PersonService:
-    @staticmethod
-    def create(person: Dict) -> Person:
-        new_person = Person()
-        new_person.first_name = person["first_name"]
-        new_person.last_name = person["last_name"]
-        new_person.company_name = person["company_name"]
 
-        db.session.add(new_person)
-        db.session.commit()
-
-        return new_person
-
-    @staticmethod
-    def retrieve(person_id: int) -> Person:
-        person = db.session.query(Person).get(person_id)
-        return person
-
+    # Retrieve from person-api
     @staticmethod
     def retrieve_all() -> List[Person]:
-        return db.session.query(Person).all()
+        response = requests.get(BASE_URL_PERSON_API + "/persons")
+        person_list = [Person(**item) for item in response.json()]
+        return person_list

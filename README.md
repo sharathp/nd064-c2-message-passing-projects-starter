@@ -14,10 +14,11 @@ To do so, ***you will refactor this application into a microservice architecture
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/) - API webserver
 * [SQLAlchemy](https://www.sqlalchemy.org/) - Database ORM
 * [PostgreSQL](https://www.postgresql.org/) - Relational database
-* [PostGIS](https://postgis.net/) - Spatial plug-in for PostgreSQL enabling geographic queries]
+* [PostGIS](https://postgis.net/) - Spatial plug-in for PostgreSQL enabling geographic queries 
 * [Vagrant](https://www.vagrantup.com/) - Tool for managing virtual deployed environments
 * [VirtualBox](https://www.virtualbox.org/) - Hypervisor allowing you to run multiple operating systems
 * [K3s](https://k3s.io/) - Lightweight distribution of K8s to easily develop against a local cluster
+* [Kafka](https://kafka.apache.org/) - Distributed Message Queue
 
 ## Running the app
 The project has been set up such that you should be able to have the project up and running with Kubernetes.
@@ -79,26 +80,30 @@ Afterwards, you can test that `kubectl` works by running a command like `kubectl
 1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
 2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
 3. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
-4. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
-5. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
-6. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
+4. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
+5. `kubectl apply -f deployment/kafka-zookeeper.yaml` - Set up Kafka (and Zookeeper)
+6. `sh scripts/create_kafka_topic.sh <POD_NAME>` - Create (and validate) "locations" queue against the `kafka` pod. (`kubectl get pods` will give you the `POD_NAME`)
+7. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
+8. `kubectl apply -f deployment/udaconnect-connection-processor.yaml` - Set up the deployment for the connection processor
+9. `kubectl apply -f deployment/udaconnect-connection-api.yaml` - Set up the service and deployment for the connection microservice
+10. `kubectl apply -f deployment/udaconnect-person-api.yaml` - Set up the service and deployment for the person microservice
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
 
 Note: The first time you run this project, you will need to seed the database with dummy data. Use the command `sh scripts/run_db_command.sh <POD_NAME>` against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`). Subsequent runs of `kubectl apply` for making changes to deployments or services shouldn't require you to seed the database again!
 
 ### Verifying it Works
-Once the project is up and running, you should be able to see 3 deployments and 3 services in Kubernetes:
-`kubectl get pods` and `kubectl get services` - should both return `udaconnect-app`, `udaconnect-api`, and `postgres`
+Once the project is up and running, you should be able to see 7 deployments and 7 services in Kubernetes:
+`kubectl get pods` and `kubectl get services` - should both return `kubernetes`, `postgres`, `zoo1`, `kafka-service`, `udaconnect-app`, `udaconnect-connection-api`, and `udaconnect-person-api`.
 
 
 These pages should also load on your web browser:
-* `http://localhost:30001/` - OpenAPI Documentation
-* `http://localhost:30001/api/` - Base path for API
 * `http://localhost:30000/` - Frontend ReactJS Application
+* `http://localhost:30002/api/` - Base path for People microservice/API
+* `http://localhost:30003/api/` - Base path for Connection microservice/API
 
 #### Deployment Note
-You may notice the odd port numbers being served to `localhost`. [By default, Kubernetes services are only exposed to one another in an internal network](https://kubernetes.io/docs/concepts/services-networking/service/). This means that `udaconnect-app` and `udaconnect-api` can talk to one another. For us to connect to the cluster as an "outsider", we need to a way to expose these services to `localhost`.
+You may notice the odd port numbers being served to `localhost`. [By default, Kubernetes services are only exposed to one another in an internal network](https://kubernetes.io/docs/concepts/services-networking/service/). This means that `udaconnect-app`,  `udaconnect-connection-api` and `udaconnect-person-api` can talk to one another. For us to connect to the cluster as an "outsider", we need to a way to expose these services to `localhost`.
 
 Connections to the Kubernetes services have been set up through a [NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#nodeport). (While we would use a technology like an [Ingress Controller](https://kubernetes.io/docs/concepts/services-networking/ingress-controllers/) to expose our Kubernetes services in deployment, a NodePort will suffice for development.)
 

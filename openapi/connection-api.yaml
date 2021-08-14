@@ -99,7 +99,7 @@ paths:
             items:
               $ref: '#/definitions/Connection'
         400:
-          description: Invalid tag value
+          description: Invalid input
 
 definitions:
   Person:
@@ -110,7 +110,7 @@ definitions:
     - company_name
     properties:
       id:
-        type: string
+        type: integer
       first_name:
         type: string
       last_name:
@@ -118,7 +118,7 @@ definitions:
       company_name:
         type: string
     xml:
-      name: Order
+      name: Person
   Location:
     type: object
     required:

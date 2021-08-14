@@ -1,0 +1,97 @@
+swagger: '2.0'
+info:
+  description: |
+    This UdaConnect API provices Person related capabilities.
+  version: 1.0.0
+  title: UdaConnect - Person API
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+- name: person
+  description: Represents a person
+paths:
+  /persons:
+    post:
+      tags:
+      - person
+      summary: Create a new Person
+      operationId: addPerson
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: person
+        description: Person to be created
+        required: true
+        schema:
+          $ref: '#/definitions/Person'
+      responses:
+        200:
+          description: Successful
+        400:
+          description: Invalid input
+    get:
+      tags:
+      - person
+      summary: Get all Persons
+      operationId: getPersons
+      produces:
+      - application/json
+      responses:
+        200:
+          description: successful operation
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Person'
+        400:
+          description: Invalid input
+  /persons/{personId}:
+    get:
+      tags:
+      - person
+      summary: Find Person by ID
+      description: Returns a single Person
+      operationId: getPersonById
+      produces:
+      - application/json
+      parameters:
+      - name: personId
+        in: path
+        description: ID of Person to return
+        required: true
+        type: integer
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Person'
+        400:
+          description: Invalid ID supplied
+        404:
+          description: Person not found
+definitions:
+  Person:
+    type: object
+    required:
+    - first_name
+    - last_name
+    - company_name
+    properties:
+      id:
+        type: integer
+      first_name:
+        type: string
+      last_name:
+        type: string
+      company_name:
+        type: string
+    xml:
+      name: Person
+host: localhost:30002
+basePath: /api
+schemes:
+ - http

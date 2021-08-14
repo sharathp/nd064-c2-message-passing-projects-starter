@@ -25,7 +25,7 @@ for message in consumer:
             new_location = LocationService.create(new_location)
             logger.info(f"Successfully created new location: {new_location}")
     except Exception as e:
-        logger.error(e.format_exc())
+        logger.error(e)
 
 
 

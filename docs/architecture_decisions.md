@@ -1,6 +1,6 @@
 # Microservice Architecture
 ## Diagram
-![UdaConnect Architecture](UdaConnect_Architecture.png)
+![UdaConnect Architecture](architecture_design.png)
 
 ## Components
 1. Database

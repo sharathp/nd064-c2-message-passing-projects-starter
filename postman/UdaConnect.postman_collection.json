@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "4c92b54a-f13c-4037-92b8-eeeeeb5b25bd",
+		"name": "UdaConnect",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Person API",
+			"item": [
+				{
+					"name": "Get All Persons",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PERSON_API_BASE_URL}}/persons",
+							"host": [
+								"{{PERSON_API_BASE_URL}}"
+							],
+							"path": [
+								"persons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Person",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 10,\n    \"first_name\": \"Foo\",\n    \"last_name\": \"Bar\",\n    \"company_name\": \"CAT Organization\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{PERSON_API_BASE_URL}}/persons",
+							"host": [
+								"{{PERSON_API_BASE_URL}}"
+							],
+							"path": [
+								"persons"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Person By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PERSON_API_BASE_URL}}/persons/10",
+							"host": [
+								"{{PERSON_API_BASE_URL}}"
+							],
+							"path": [
+								"persons",
+								"10"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Connection API",
+			"item": [
+				{
+					"name": "Get Location by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CONNECTION_API_BASE_URL}}/locations/29",
+							"host": [
+								"{{CONNECTION_API_BASE_URL}}"
+							],
+							"path": [
+								"locations",
+								"29"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Connections",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{CONNECTION_API_BASE_URL}}/connections?start_date=2020-01-01&end_date=2020-12-30&distance=5&person_id=1",
+							"host": [
+								"{{CONNECTION_API_BASE_URL}}"
+							],
+							"path": [
+								"connections"
+							],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2020-01-01"
+								},
+								{
+									"key": "end_date",
+									"value": "2020-12-30"
+								},
+								{
+									"key": "distance",
+									"value": "5"
+								},
+								{
+									"key": "person_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Location",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 70,\n    \"person_id\": 10,\n    \"longitude\": \"37.55363\",\n    \"latitude\": \"-122.290883\",\n    \"creation_time\": \"2020-06-01T13:12:58\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{CONNECTION_API_BASE_URL}}/locations",
+							"host": [
+								"{{CONNECTION_API_BASE_URL}}"
+							],
+							"path": [
+								"locations"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "PERSON_API_BASE_URL",
+			"value": "http://localhost:30002/api"
+		},
+		{
+			"key": "CONNECTION_API_BASE_URL",
+			"value": "http://localhost:30003/api"
+		}
+	]
+}

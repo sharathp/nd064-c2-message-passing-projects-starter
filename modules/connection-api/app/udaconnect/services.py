@@ -1,5 +1,8 @@
 import logging
-import requests
+import grpc
+import person_pb2
+import person_pb2_grpc
+
 from datetime import datetime, timedelta
 from typing import Dict, List
 
@@ -8,11 +11,15 @@ from app.udaconnect.models import Connection, Location, Person
 from app.udaconnect.schemas import LocationSchema
 from sqlalchemy.sql import text
 
+
 logging.basicConfig(level=logging.WARNING)
 logger = logging.getLogger("udaconnect-person-api")
 
 TOPIC_KAFKA_LOCATIONS = "locations"
 BASE_URL_PERSON_API = "http://udaconnect-person-api:5000/api"
+
+channel = grpc.insecure_channel("udaconnect-person-grpc:5000")
+person_stub = person_pb2_grpc.PersonServiceStub(channel)
 
 class ConnectionService:
     @staticmethod
@@ -110,9 +117,12 @@ class LocationService:
 
 class PersonService:
 
-    # Retrieve from person-api
+    # Retrieve from person-grpc
     @staticmethod
     def retrieve_all() -> List[Person]:
-        response = requests.get(BASE_URL_PERSON_API + "/persons")
-        person_list = [Person(**item) for item in response.json()]
+        response = person_stub.Get(person_pb2.Empty())
+        person_list = [Person(id=item.id,
+                              first_name=item.first_name,
+                              last_name=item.last_name,
+                              company_name=item.company_name) for item in response.items]
         return person_list

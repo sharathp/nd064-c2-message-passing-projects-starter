@@ -87,14 +87,15 @@ Afterwards, you can test that `kubectl` works by running a command like `kubectl
 8. `kubectl apply -f deployment/udaconnect-connection-processor.yaml` - Set up the deployment for the connection processor
 9. `kubectl apply -f deployment/udaconnect-connection-api.yaml` - Set up the service and deployment for the connection microservice
 10. `kubectl apply -f deployment/udaconnect-person-api.yaml` - Set up the service and deployment for the person microservice
+11. `kubectl apply -f deployment/udaconnect-person-grpc.yaml` - Set up the service and deployment for the person gRPC microservice
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
 
 Note: The first time you run this project, you will need to seed the database with dummy data. Use the command `sh scripts/run_db_command.sh <POD_NAME>` against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`). Subsequent runs of `kubectl apply` for making changes to deployments or services shouldn't require you to seed the database again!
 
 ### Verifying it Works
-Once the project is up and running, you should be able to see 7 deployments and 7 services in Kubernetes:
-`kubectl get pods` and `kubectl get services` - should both return `kubernetes`, `postgres`, `zoo1`, `kafka-service`, `udaconnect-app`, `udaconnect-connection-api`, and `udaconnect-person-api`.
+Once the project is up and running, you should be able to see 8 deployments and 7 services in Kubernetes:
+`kubectl get pods` and `kubectl get services` - should both return `kubernetes`, `postgres`, `zoo1`, `kafka-service`, `udaconnect-app`, `udaconnect-connection-api`, `udaconnect-person-api` and `udaconnect-person-grpc`.
 
 
 These pages should also load on your web browser:
